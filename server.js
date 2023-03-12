@@ -1,9 +1,13 @@
 require("dotenv").config()
 
 const express = require("express")
+const cors = require("cors")
 const app = express()
 
-app.request(express.json())
+app.use(express.json())
+app.use(cors({
+    origin: "http://localhost:5500"
+}))
 
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 
@@ -30,8 +34,8 @@ app.post("/checkout", async (req, res) => {
                     quantity: item.qty
                 }
             }),
-            success: `${process.env.SERVER_URL}/success.html`,
-            cancel_url: `${process.env.SERVER_URL}/cancel.html`
+            success_url: `${process.env.CLIENT_URL}/success.html`,
+            cancel_url: `${process.env.CLIENT_URL}/cancel.html`
         })
         res.json({ url: session.url })   
     } catch (e) {
